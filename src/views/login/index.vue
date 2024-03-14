@@ -40,7 +40,8 @@ export default {
       seconds: 5,
       timer: null,
       mobile: '',
-      msgCode: ''
+      msgCode: '',
+      smsCode: ''
     }
   },
   name: 'LoginPage',
@@ -86,7 +87,8 @@ export default {
       if (!/^\d{6}$/.test(this.smsCode)) {
         this.$toast('请输入正确的短信验证码')
       }
-      await codeLogin(this.mobile, this.smsCode)
+      const res = await codeLogin(this.mobile, this.smsCode)
+      this.$store.commit('user/setUserInfo', res.data)
       this.$router.push('/')
       this.$toast('登录成功')
     }
