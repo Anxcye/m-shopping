@@ -9,27 +9,27 @@
 
       <div class="form">
         <div class="form-item">
-          <input class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
+          <input v-model="mobile" class="inp" maxlength="11" placeholder="请输入手机号码" type="text">
         </div>
         <div class="form-item">
           <input v-model="picCode" class="inp" maxlength="5" placeholder="请输入图形验证码" type="text">
           <img v-if="picUrl" :src="picUrl" alt="" @click="getPic">
         </div>
         <div class="form-item">
-          <input class="inp" placeholder="请输入短信验证码" type="text">
+          <input v-model="smsCode" class="inp" placeholder="请输入短信验证码" type="text">
           <button @click="getcode">
             {{totalSeconds === seconds ? '获取验证码' : seconds + 's 重新获取'}}
             </button>
         </div>
       </div>
 
-      <div class="login-btn">登录</div>
+      <div class="login-btn" @click="login">登录</div>
     </div>
   </div>
 </template>
 
 <script>
-import { getPicCode } from '@/api/login'
+import { getMsgCode, getPicCode, codeLogin } from '@/api/login'
 export default {
   data () {
     return {
@@ -38,7 +38,9 @@ export default {
       picKey: '',
       totalSeconds: 5,
       seconds: 5,
-      timer: null
+      timer: null,
+      mobile: '',
+      msgCode: ''
     }
   },
   name: 'LoginPage',
@@ -51,8 +53,12 @@ export default {
       this.picUrl = res.data.base64
       this.picKey = res.data.key
     },
-    getcode () {
-      if (this.totalSeconds === this.seconds) {
+
+    async getcode () {
+      if (!this.validFn()) { return }
+      if (!this.timer && this.totalSeconds === this.seconds) {
+        await getMsgCode(this.picCode, this.picKey, this.mobile)
+        this.$toast('验证码已发送')
         this.timer = setInterval(() => {
           if (this.seconds > 0) {
             this.seconds--
@@ -62,6 +68,27 @@ export default {
           }
         }, 1000)
       }
+    },
+
+    validFn () {
+      if (!/^1[3-9]\d{9}$/.test(this.mobile)) {
+        this.$toast('请输入正确的手机号码')
+        return false
+      }
+      if (!/^\w{4}$/.test(this.picCode)) {
+        this.$toast('请输入正确的图形验证码')
+        return false
+      }
+      return true
+    },
+    async login () {
+      if (!this.validFn()) { return }
+      if (!/^\d{6}$/.test(this.smsCode)) {
+        this.$toast('请输入正确的短信验证码')
+      }
+      await codeLogin(this.mobile, this.smsCode)
+      this.$router.push('/')
+      this.$toast('登录成功')
     }
   },
   destroyed () {

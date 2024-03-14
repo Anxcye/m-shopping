@@ -1,5 +1,26 @@
-import instance from '@/utils/request'
+import request from '@/utils/request'
 
 export function getPicCode () {
-  return instance.get('/captcha/image')
+  return request.get('/captcha/image')
+}
+
+export const getMsgCode = (captchaCode, captchaKey, mobile) => {
+  return request.post('/captcha/sendSmsCaptcha', {
+    form: {
+      captchaCode,
+      captchaKey,
+      mobile
+    }
+  })
+}
+
+export const codeLogin = (mobile, smsCode) => {
+  return request.post('/passport/login', {
+    form: {
+      isParty: false,
+      mobile,
+      partyData: {},
+      smsCode
+    }
+  })
 }
