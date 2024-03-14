@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import '@/utils/vant-ui.js'
 import '@/styles/common.less'
+import { Lazyload } from 'vant'
+Vue.use(Lazyload)
 
 Vue.config.productionTip = false
 
