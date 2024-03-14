@@ -34,7 +34,7 @@ instance.interceptors.response.use(function (response) {
     // 清除 loading 中的效果
     Toast.clear()
   }
-  return response.data
+  return res
 }, function (error) {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
