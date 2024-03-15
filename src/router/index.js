@@ -59,12 +59,15 @@ const authUrl = ['/pay', '/myorder']
 
 router.beforeEach((to, from, next) => {
   const token = store.state.user.userInfo.token
-  if (!authUrl.includes(to.path)) { next() }
-
-  if (!token) {
-    next('/login')
-  } else {
+  if (!authUrl.includes(to.path)) {
     next()
+    return
+  }
+
+  if (token) {
+    next()
+  } else {
+    next('/login')
   }
 })
 

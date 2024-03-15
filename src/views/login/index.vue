@@ -83,13 +83,15 @@ export default {
       return true
     },
     async login () {
+      const url = this.$route.query.backUrl || '/'
+
       if (!this.validFn()) { return }
       if (!/^\d{6}$/.test(this.smsCode)) {
         this.$toast('请输入正确的短信验证码')
       }
       const res = await codeLogin(this.mobile, this.smsCode)
       this.$store.commit('user/setUserInfo', res.data)
-      this.$router.push('/')
+      this.$router.replace(url)
       this.$toast('登录成功')
     }
   },
