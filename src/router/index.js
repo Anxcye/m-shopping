@@ -11,9 +11,9 @@ import Category from '@/views/layout/category'
 import Cart from '@/views/layout/cart'
 import User from '@/views/layout/user'
 
-const ProDetail = () => import('@/views/prodetail')
+const ProDetail = () => import('@/views/proDetail')
 const Pay = () => import('@/views/pay')
-const MyOrder = () => import('@/views/myorder')
+const MyOrder = () => import('@/views/myOrder')
 
 Vue.use(VueRouter)
 
