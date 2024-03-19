@@ -131,9 +131,11 @@ import CountBox from '@/components/CountBox.vue'
 import { getProComment, getProDeatil } from '@/api/product'
 import defaultImg from '@/assets/default-avatar.png'
 import { addCart } from '@/api/cart'
+import loginConfirm from '@/mixins/loginConfirm'
 
 export default {
   name: 'ProDetail',
+  mixins: [loginConfirm],
   components: {
     CountBox
   },
@@ -153,6 +155,9 @@ export default {
   },
   methods: {
     goBuyNow () {
+      if (this.loginConfirm()) {
+        return
+      }
       this.$router.push({
         path: '/pay',
         query: {
@@ -164,25 +169,9 @@ export default {
       })
     },
     async addCart () {
-      if (!this.$store.state.user.userInfo.token) {
-        this.$dialog
-          .confirm({
-            title: '提示',
-            message: '您还未登录，是否前往登录？',
-            confirmButtonText: '去登录',
-            cancelButtonText: '再逛逛'
-          })
-          .then(() => {
-            this.$router.replace({
-              path: '/login',
-              query: {
-                backUrl: this.$route.fullPath
-              }
-            })
-          })
-          .catch(() => {})
+      if (this.loginConfirm()) {
+        return
       }
-
       const {
         data: { cartTotal }
       } = await addCart(
