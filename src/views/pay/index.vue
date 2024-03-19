@@ -1,27 +1,29 @@
 <template>
   <div class="pay">
-    <van-nav-bar fixed title="订单结算台" left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar
+      fixed
+      title="订单结算台"
+      left-arrow
+      @click-left="$router.go(-1)"
+    />
 
     <!-- 地址相关 -->
     <div class="address">
-
       <div class="left-icon">
         <van-icon name="logistics" />
       </div>
 
       <div class="info" v-if="true">
         <div class="info-content">
-          <span class="name">小红</span>
-          <span class="mobile">13811112222</span>
+          <span class="name">{{ selectAddress.name }}</span>
+          <span class="mobile">{{ selectAddress.phone }}</span>
         </div>
         <div class="info-address">
-          江苏省 无锡市 南长街 110号 504
+          {{ longAddress }}
         </div>
       </div>
 
-      <div class="info" v-else>
-        请选择配送地址
-      </div>
+      <div class="info" v-else>请选择配送地址</div>
 
       <div class="right-icon">
         <van-icon name="arrow" />
@@ -32,18 +34,22 @@
     <div class="pay-list">
       <div class="list">
         <div class="goods-item">
-            <div class="left">
-              <img src="http://cba.itlike.com/public/uploads/10001/20230321/8f505c6c437fc3d4b4310b57b1567544.jpg" alt="" />
-            </div>
-            <div class="right">
-              <p class="tit text-ellipsis-2">
-                 三星手机 SAMSUNG Galaxy S23 8GB+256GB 超视觉夜拍系统 超清夜景 悠雾紫 5G手机 游戏拍照旗舰机s23
-              </p>
-              <p class="info">
-                <span class="count">x3</span>
-                <span class="price">¥9.99</span>
-              </p>
-            </div>
+          <div class="left">
+            <img
+              src="http://cba.itlike.com/public/uploads/10001/20230321/8f505c6c437fc3d4b4310b57b1567544.jpg"
+              alt=""
+            />
+          </div>
+          <div class="right">
+            <p class="tit text-ellipsis-2">
+              三星手机 SAMSUNG Galaxy S23 8GB+256GB 超视觉夜拍系统 超清夜景
+              悠雾紫 5G手机 游戏拍照旗舰机s23
+            </p>
+            <p class="info">
+              <span class="count">x3</span>
+              <span class="price">¥9.99</span>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -74,7 +80,9 @@
       <div class="pay-way">
         <span class="tit">支付方式</span>
         <div class="pay-cell">
-          <span><van-icon name="balance-o" />余额支付（可用 ¥ 999919.00 元）</span>
+          <span
+            ><van-icon name="balance-o" />余额支付（可用 ¥ 999919.00 元）</span
+          >
           <!-- <span>请先选择配送地址</span> -->
           <span class="red"><van-icon name="passed" /></span>
         </div>
@@ -82,7 +90,13 @@
 
       <!-- 买家留言 -->
       <div class="buytips">
-        <textarea placeholder="选填：买家留言（50字内）" name="" id="" cols="30" rows="10"></textarea>
+        <textarea
+          placeholder="选填：买家留言（50字内）"
+          name=""
+          id=""
+          cols="30"
+          rows="10"
+        ></textarea>
       </div>
     </div>
 
@@ -95,13 +109,39 @@
 </template>
 
 <script>
+import { getAddressList } from '@/api/pay'
 export default {
   name: 'PayIndex',
   data () {
     return {
+      addressList: []
     }
   },
+  created () {
+    this.getAddressList()
+  },
   methods: {
+    async getAddressList () {
+      const {
+        data: { list }
+      } = await getAddressList()
+      // console.log(res)
+      this.addressList = list
+    }
+  },
+  computed: {
+    selectAddress () {
+      return this.addressList[0]
+    },
+    longAddress () {
+      const region = this.selectAddress.region
+      return (
+        region.province +
+        region.city +
+        region.region +
+        this.selectAddress.detail
+      )
+    }
   }
 }
 </script>
@@ -241,12 +281,12 @@ export default {
     padding-left: 12px;
     color: #666;
     span {
-      color:#fa2209;
+      color: #fa2209;
     }
   }
   .tipsbtn {
     width: 121px;
-    background: linear-gradient(90deg,#f9211c,#ff6335);
+    background: linear-gradient(90deg, #f9211c, #ff6335);
     color: #fff;
     text-align: center;
     line-height: 46px;
