@@ -66,6 +66,7 @@
             v-if="!isEdit"
             :class="{ disabled: selCount === 0 }"
             class="goPay"
+            @click="goPay"
           >
             结算({{ selCount }})
           </div>
@@ -113,6 +114,10 @@ export default {
 
     isLogin () {
       return this.$store.state.user.userInfo.token
+    },
+
+    selCartList () {
+      return this.cartList.filter(item => item.isChecked)
     }
   },
 
@@ -123,13 +128,24 @@ export default {
   },
 
   methods: {
+    goPay () {
+      this.$router.push({
+        path: '/pay',
+        query: {
+          mode: 'cart',
+          cartIds: this.selCartList.map(item => item.id).join(',')
+        }
+      })
+    },
     toggleCheck (id) {
       console.log(id)
       this.$store.commit('cart/toggleCheck', id)
     },
+
     toggleAllCheck () {
       this.$store.commit('cart/toggleAllCheck', !this.isAllChecked)
     },
+
     changeCount (goodsNum, goodsId, goodsSkuId) {
       this.$store.dispatch('cart/changeCountAction', {
         goodsNum,
